@@ -18,11 +18,11 @@ class GoogleCalendar():
             flow = InstalledAppFlow.from_client_config(
                 {
                     "installed": {
-                        "client_id": "Your Client Id",
-                        "project_id": "Project ID",
+                        "client_id": "Your Client Id", //need to add your client id 
+                        "project_id": "Project ID",// need to add project id 
                         "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                         "token_uri": "https://oauth2.googleapis.com/token",
-                        "client_secret": "Secret",
+                        "client_secret": "Secret", secret id
                         "redirect_uris": ["http://localhost"]
                     }
                 },
