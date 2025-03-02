@@ -10,7 +10,6 @@ BASE_URL = "https://www.googleapis.com/calendar/v3/calendars/primary/events"
 class GoogleCalendar():
     def __init__(self):
         self.access_token = self.get_access_token()
-
     def get_access_token(self):
         creds = None
         if os.path.exists("token.json"):
