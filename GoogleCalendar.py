@@ -21,6 +21,9 @@ class GoogleCalendar():
             if creds and creds.expired and creds.refresh_token:
                 print("Refreshing expired token...")
                 creds.refresh(Request())
+                # ✅ Save the refreshed token
+                with open("token.json", "w") as token_file:
+                    token_file.write(creds.to_json())
             else:
                 print("No valid token found, requesting new one...")
                 flow = InstalledAppFlow.from_client_config(
@@ -39,6 +42,7 @@ class GoogleCalendar():
                 creds = flow.run_local_server(port=0)
                 with open("token.json", "w") as token:
                     token.write(creds.to_json())
+
         print("Token is valid")
         return creds.token
 
