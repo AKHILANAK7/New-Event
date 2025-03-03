@@ -2,6 +2,7 @@ import os
 import json
 import requests
 from google.oauth2.credentials import Credentials
+from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 
 SCOPES = ["https://www.googleapis.com/auth/calendar"]
@@ -10,28 +11,39 @@ BASE_URL = "https://www.googleapis.com/calendar/v3/calendars/primary/events"
 class GoogleCalendar():
     def __init__(self):
         self.access_token = self.get_access_token()
+
     def get_access_token(self):
         creds = None
         if os.path.exists("token.json"):
             creds = Credentials.from_authorized_user_file("token.json", SCOPES)
+
         if not creds or not creds.valid:
-            flow = InstalledAppFlow.from_client_config(
-                {
-                    "installed": {
-                        "client_id": "Your Client Id",
-                        "project_id": "Project ID",
-                        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-                        "token_uri": "https://oauth2.googleapis.com/token",
-                        "client_secret": "Secret",
-                        "redirect_uris": ["http://localhost"]
-                    }
-                },
-                SCOPES
-            )
-            creds = flow.run_local_server(port=0)
-            with open("token.json", "w") as token:
-                token.write(creds.to_json())
+            if creds and creds.expired and creds.refresh_token:
+                print("Refreshing expired token...")
+                creds.refresh(Request())
+            else:
+                print("No valid token found, requesting new one...")
+                flow = InstalledAppFlow.from_client_config(
+                    {
+                        "installed": {
+                            "client_id": "client id",
+                            "project_id": "calendar-api-app-452207",
+                            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                            "token_uri": "https://oauth2.googleapis.com/token",
+                            "client_secret": "Secret",
+                            "redirect_uris": ["http://localhost"]
+                        }
+                    },
+                    SCOPES
+                )
+                creds = flow.run_local_server(port=0)
+                with open("token.json", "w") as token:
+                    token.write(creds.to_json())
+        print("Token is valid")
         return creds.token
+
+    def check_token(self):
+        print(f"Checking token: {self.access_token}")
 
     def create_event(self, summary, description, start_time, end_time):
         headers = {"Authorization": f"Bearer {self.access_token}", "Content-Type": "application/json"}
@@ -74,3 +86,11 @@ class GoogleCalendar():
             print("Event Deleted Successfully")
         else:
             print(f"Failed to delete event: {response.text}")
+
+
+# def main():
+#     calendar = GoogleCalendar()
+#     calendar.check_token()
+#
+# if __name__ == "__main__":
+#     main()
