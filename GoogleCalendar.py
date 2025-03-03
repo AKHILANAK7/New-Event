@@ -21,7 +21,6 @@ class GoogleCalendar():
             if creds and creds.expired and creds.refresh_token:
                 print("Refreshing expired token...")
                 creds.refresh(Request())
-                # ✅ Save the refreshed token
                 with open("token.json", "w") as token_file:
                     token_file.write(creds.to_json())
             else:
